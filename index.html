@@ -2,154 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportsStats MVP</title>
+    <title>StatMaster - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .page { display: none; }
-        .active-page { display: block; }
-        .nav-active { border-bottom: 2px solid #22d3ee; color: white; }
-    </style>
 </head>
-<body class="bg-[#0f172a] text-gray-100">
+<body class="bg-[#0f172a] text-white flex min-h-screen">
 
-    <nav class="bg-[#1e293b] p-4 sticky top-0 z-50 border-b border-gray-700">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold text-cyan-400">STAT<span class="text-white">MVP</span></h1>
-            <div class="flex space-x-4 text-sm font-medium text-gray-400">
-                <button onclick="showPage('home')" id="nav-home" class="nav-item nav-active">Home</button>
-                <button onclick="showPage('scores')" id="nav-scores" class="nav-item">Live</button>
-                <button onclick="showPage('fixtures')" id="nav-fixtures" class="nav-item">Fixtures</button>
-                <button onclick="showPage('rankings')" id="nav-rankings" class="nav-item">Rankings</button>
-            </div>
+    <aside class="w-64 bg-[#1e293b] border-r border-gray-800 p-6 space-y-8">
+        <div>
+            <h3 class="text-xs font-semibold text-gray-500 uppercase mb-4">Categories</h3>
+            <nav class="space-y-2">
+                <button onclick="filterLeagues('football')" class="w-full flex items-center justify-between bg-cyan-600/20 text-cyan-400 p-3 rounded-xl border border-cyan-500/30">
+                    <span><i class="fa-solid fa-futbol mr-3"></i> Football</span>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+                <button onclick="filterLeagues('cricket')" class="w-full flex items-center text-gray-400 p-3 hover:text-white transition">
+                    <i class="fa-solid fa-cricket-bat-ball mr-3"></i> Cricket
+                </button>
+                <button onclick="filterLeagues('basketball')" class="w-full flex items-center text-gray-400 p-3 hover:text-white transition">
+                    <i class="fa-solid fa-basketball mr-3"></i> Basketball
+                </button>
+            </nav>
         </div>
-    </nav>
+        <div>
+            <h3 class="text-xs font-semibold text-gray-500 uppercase mb-4">Player Search</h3>
+            <input type="text" placeholder="Type 'Gabriel Martinelli'..." class="w-full bg-[#0f172a] border border-gray-700 rounded-lg px-4 py-2 text-sm focus:border-cyan-500 outline-none">
+        </div>
+    </aside>
 
-    <div class="max-w-6xl mx-auto p-4">
+    <main class="flex-1 p-8">
+        <nav class="flex space-x-8 border-b border-gray-800 mb-8 pb-4 text-sm font-medium text-gray-400">
+            <a href="index.html" class="text-white border-b-2 border-cyan-400 pb-4">Home</a>
+            <a href="live-scores.html" class="hover:text-white">Live Scores</a>
+            <a href="fixtures.html" class="hover:text-white">Fixtures</a>
+            <a href="rankings.html" class="hover:text-white">Rankings</a>
+        </nav>
+
+        <h1 id="league-heading" class="text-2xl font-bold mb-6">Football Leagues</h1>
         
-        <section id="home" class="page active-page space-y-6">
-            <h2 class="text-2xl font-bold">Today's Top Stats</h2>
-            
-            <div class="flex space-x-2">
-                <button class="bg-cyan-600 px-4 py-1 rounded-full text-xs font-bold">Football</button>
-                <button class="bg-gray-700 px-4 py-1 rounded-full text-xs">Cricket</button>
-                <button class="bg-gray-700 px-4 py-1 rounded-full text-xs">Basketball</button>
+        <div id="league-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-[#1e293b] p-6 rounded-2xl border border-gray-800 hover:border-cyan-500 cursor-pointer">
+                <img src="https://media.api-sports.io/football/leagues/39.png" class="w-12 mb-4">
+                <h3 class="font-bold">Premier League</h3>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-[#1e293b] p-4 rounded-xl border border-gray-700">
-                    <h3 class="text-cyan-400 font-bold mb-3"><i class="fa-solid fa-fire mr-2"></i>Most Goals (EPL)</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between border-b border-gray-800 pb-1"><span>1. E. Haaland</span><span class="font-bold">32</span></div>
-                        <div class="flex justify-between border-b border-gray-800 pb-1"><span>2. M. Salah</span><span class="font-bold">24</span></div>
-                        <div class="flex justify-between"><span>3. G. Martinelli</span><span class="font-bold text-cyan-400 underline cursor-pointer" onclick="showPlayer()">11 (View)</span></div>
-                    </div>
-                </div>
-
-                <div class="bg-[#1e293b] p-4 rounded-xl border border-gray-700">
-                    <h3 class="text-red-400 font-bold mb-3"><i class="fa-solid fa-square mr-2"></i>Most Red Cards</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between border-b border-gray-800 pb-1"><span>1. Casemiro</span><span class="font-bold">2</span></div>
-                        <div class="flex justify-between"><span>2. C. Nørgaard</span><span class="font-bold">1</span></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="scores" class="page space-y-4">
-            <h2 class="text-2xl font-bold italic text-red-500">● LIVE NOW</h2>
-            <div class="bg-[#1e293b] p-4 rounded-xl border-l-4 border-red-500 flex justify-between items-center">
-                <div>
-                    <p class="text-xs text-gray-400 uppercase">Premier League - 74'</p>
-                    <p class="font-bold">Arsenal <span class="text-cyan-400">2 - 1</span> Liverpool</p>
-                </div>
-                <div class="text-right">
-                    <p class="text-xs text-emerald-400">Martinelli 33'</p>
-                    <p class="text-xs text-gray-400">Salah 28'</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="fixtures" class="page space-y-4">
-            <h2 class="text-2xl font-bold">Upcoming Games</h2>
-            <div class="bg-[#1e293b] p-4 rounded-xl border border-gray-700 flex justify-between">
-                <span>Man City vs Tottenham</span>
-                <span class="text-cyan-400 font-mono">20:00 GMT</span>
-            </div>
-            <div class="bg-[#1e293b] p-4 rounded-xl border border-gray-700 flex justify-between">
-                <span>Real Madrid vs Barcelona</span>
-                <span class="text-gray-400 font-mono text-sm">Tomorrow</span>
-            </div>
-        </section>
-
-        <section id="rankings" class="page space-y-4">
-            <h2 class="text-2xl font-bold">League Table</h2>
-            <table class="w-full text-left text-sm bg-[#1e293b] rounded-xl overflow-hidden">
-                <thead class="bg-gray-800 text-gray-400 uppercase text-xs">
-                    <tr>
-                        <th class="p-3">Pos</th>
-                        <th class="p-3">Club</th>
-                        <th class="p-3 text-right">Pts</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b border-gray-800">
-                        <td class="p-3 font-bold">1</td>
-                        <td class="p-3">Man City</td>
-                        <td class="p-3 text-right">88</td>
-                    </tr>
-                    <tr class="border-b border-gray-800 bg-cyan-900/20">
-                        <td class="p-3 font-bold text-cyan-400">2</td>
-                        <td class="p-3">Arsenal</td>
-                        <td class="p-3 text-right font-bold">86</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <div id="playerModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4">
-            <div class="bg-[#1e293b] max-w-sm w-full p-6 rounded-2xl border border-cyan-500 relative">
-                <button onclick="closePlayer()" class="absolute top-4 right-4 text-gray-400">✕</button>
-                <div class="text-center">
-                    <div class="w-20 h-20 bg-gray-700 rounded-full mx-auto mb-4 border-2 border-cyan-400 flex items-center justify-center text-3xl">GM</div>
-                    <h2 class="text-xl font-bold">Gabriel Martinelli</h2>
-                    <p class="text-sm text-gray-400 mb-4">Arsenal • Forward</p>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="bg-[#0f172a] p-2 rounded">
-                            <p class="text-xs text-gray-500">Goals</p>
-                            <p class="font-bold">11</p>
-                        </div>
-                        <div class="bg-[#0f172a] p-2 rounded">
-                            <p class="text-xs text-gray-500">Assists</p>
-                            <p class="font-bold">7</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="bg-[#1e293b] p-6 rounded-2xl border border-gray-800 hover:border-cyan-500 cursor-pointer">
+                <img src="https://media.api-sports.io/football/leagues/140.png" class="w-12 mb-4">
+                <h3 class="font-bold">La Liga</h3>
             </div>
         </div>
-
-    </div>
+    </main>
 
     <script>
-        // PAGE SWITCHER LOGIC
-        function showPage(pageId) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-            // Show current page
-            document.getElementById(pageId).classList.add('active-page');
-            
-            // Update Nav styles
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
-            document.getElementById('nav-' + pageId).classList.add('nav-active');
-        }
+        const data = {
+            football: ["Premier League", "La Liga", "Champions League"],
+            cricket: ["IPL", "T20 World Cup", "The Ashes"],
+            basketball: ["NBA", "EuroLeague", "NCAA"]
+        };
 
-        // PLAYER MODAL LOGIC
-        function showPlayer() {
-            document.getElementById('playerModal').style.display = 'flex';
-        }
-        function closePlayer() {
-            document.getElementById('playerModal').style.display = 'none';
+        function filterLeagues(sport) {
+            const grid = document.getElementById('league-grid');
+            document.getElementById('league-heading').innerText = sport.charAt(0).toUpperCase() + sport.slice(1) + " Leagues";
+            grid.innerHTML = data[sport].map(league => `
+                <div class="bg-[#1e293b] p-6 rounded-2xl border border-gray-800 hover:border-cyan-500 cursor-pointer">
+                    <div class="w-12 h-12 bg-gray-700 rounded mb-4 flex items-center justify-center font-bold text-xs uppercase">${league.substring(0,3)}</div>
+                    <h3 class="font-bold">${league}</h3>
+                </div>
+            `).join('');
         }
     </script>
 </body>

@@ -2,118 +2,127 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>StatMaster - Home</title>
+    <title>Football Central - StatMaster</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-[#0f172a] text-white flex min-h-screen">
+<body class="bg-[#0f172a] text-gray-100 flex min-h-screen">
 
-    <aside class="w-72 bg-[#1e293b] border-r border-gray-800 p-6 flex flex-col">
-        <div class="mb-10 px-2">
-            <h1 class="text-xl font-bold text-cyan-400">STAT<span class="text-white">MASTER</span></h1>
-        </div>
-
-        <div class="space-y-8">
-            <div>
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Categories</h3>
-                <nav class="space-y-2">
-                    <button onclick="updateLeagues('football')" id="btn-football" class="w-full flex items-center justify-between bg-cyan-600/20 text-cyan-400 p-3 rounded-xl border border-cyan-500/30 font-medium transition">
-                        <span><i class="fa-solid fa-futbol mr-3"></i> Football</span>
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </button>
-                    <button onclick="updateLeagues('cricket')" id="btn-cricket" class="w-full flex items-center text-gray-400 p-3 hover:text-white transition font-medium">
-                        <i class="fa-solid fa-cricket-bat-ball mr-3"></i> Cricket
-                    </button>
-                    <button onclick="updateLeagues('basketball')" id="btn-basketball" class="w-full flex items-center text-gray-400 p-3 hover:text-white transition font-medium">
-                        <i class="fa-solid fa-basketball mr-3"></i> Basketball
-                    </button>
-                </nav>
-            </div>
-
-            <div>
-                <h3 class="text-xs font-semibold text-gray-500 uppercase mb-4">Player Search</h3>
-                <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-500"></i>
-                    <input type="text" placeholder="Type 'Gabriel Martinelli'..." class="w-full bg-[#0f172a] border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-sm focus:border-cyan-500 outline-none transition">
-                </div>
-            </div>
-        </div>
+    <aside class="w-64 bg-[#1e293b] border-r border-gray-800 p-6 hidden md:block">
+        <h1 class="text-xl font-bold text-cyan-400 mb-8">STAT<span class="text-white">FOOTBALL</span></h1>
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-4">Leagues</h3>
+        <nav class="space-y-2">
+            <button class="w-full text-left p-3 rounded-xl bg-cyan-600/20 text-cyan-400 border border-cyan-500/30">Premier League</button>
+            <button class="w-full text-left p-3 rounded-xl text-gray-400 hover:bg-gray-800">La Liga</button>
+            <button class="w-full text-left p-3 rounded-xl text-gray-400 hover:bg-gray-800">Champions League</button>
+        </nav>
     </aside>
 
-    <main class="flex-1 p-8">
-        <nav class="flex space-x-10 border-b border-gray-800 mb-8 pb-4 text-sm font-semibold text-gray-400">
-            <a href="index.html" class="text-white border-b-2 border-cyan-400 pb-4">Home</a>
-            <a href="live-scores.html" class="hover:text-white transition">Live Scores</a>
-            <a href="fixtures.html" class="hover:text-white transition">Fixtures</a>
-            <a href="rankings.html" class="hover:text-white transition">Rankings</a>
-        </nav>
-
-        <header class="mb-8">
-            <h2 id="sport-title" class="text-2xl font-bold">Football Leagues</h2>
-            <p class="text-gray-500 text-sm mt-1">Select a league to view detailed stats and player rankings.</p>
-        </header>
-        
-        <div id="league-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-3xl font-bold">Premier League Summary</h2>
+                <p class="text-gray-400">Matchweek 36 • 2025/26 Season</p>
             </div>
-    </main>
+            <div class="flex bg-[#1e293b] rounded-lg p-1 border border-gray-700">
+                <button class="px-4 py-1.5 rounded-md bg-gray-700 text-sm font-bold">Table</button>
+                <button class="px-4 py-1.5 rounded-md text-sm text-gray-400 hover:text-white">Top Players</button>
+            </div>
+        </div>
 
-    <script>
-        const sportsContent = {
-            football: {
-                label: "Football Leagues",
-                leagues: [
-                    { name: "Premier League", country: "England", img: "https://media.api-sports.io/football/leagues/39.png" },
-                    { name: "La Liga", country: "Spain", img: "https://media.api-sports.io/football/leagues/140.png" },
-                    { name: "Champions League", country: "Europe", img: "https://media.api-sports.io/football/leagues/2.png" }
-                ]
-            },
-            cricket: {
-                label: "Cricket Leagues",
-                leagues: [
-                    { name: "IPL", country: "India", img: "https://www.thesportsdb.com/images/media/league/badge/vhtpqw1521991472.png" },
-                    { name: "T20 World Cup", country: "International", img: "https://www.thesportsdb.com/images/media/league/badge/j37m541628164390.png" },
-                    { name: "Big Bash", country: "Australia", img: "https://www.thesportsdb.com/images/media/league/badge/z3ay371520610363.png" }
-                ]
-            },
-            basketball: {
-                label: "Basketball Leagues",
-                leagues: [
-                    { name: "NBA", country: "USA", img: "https://www.thesportsdb.com/images/media/league/badge/7786881521993437.png" },
-                    { name: "EuroLeague", country: "Europe", img: "https://www.thesportsdb.com/images/media/league/badge/f135501521993952.png" }
-                ]
-            }
-        };
-
-        function updateLeagues(sportKey) {
-            const container = document.getElementById('league-container');
-            const title = document.getElementById('sport-title');
-            const data = sportsContent[sportKey];
-
-            // Update UI Title
-            title.innerText = data.label;
-
-            // Update Sidebar Button Styles
-            ['football', 'cricket', 'basketball'].forEach(key => {
-                const btn = document.getElementById(`btn-${key}`);
-                if(key === sportKey) {
-                    btn.className = "w-full flex items-center justify-between bg-cyan-600/20 text-cyan-400 p-3 rounded-xl border border-cyan-500/30 font-medium transition";
-                } else {
-                    btn.className = "w-full flex items-center text-gray-400 p-3 hover:text-white transition font-medium";
-                }
-            });
-
-            // Inject League Cards
-            container.innerHTML = data.leagues.map(league => `
-                <div class="group bg-[#1e293b] p-6 rounded-2xl border border-gray-800 hover:border-cyan-500 cursor-pointer transition-all hover:shadow-2xl hover:shadow-cyan-500/10">
-                    <img src="${league.img}" class="w-14 h-14 mb-4 object-contain" alt="${league.name}">
-                    <h3 class="font-bold text-lg">${league.name}</h3>
-                    <p class="text-xs text-gray-500 mt-1">${league.country}</p>
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            
+            <div class="xl:col-span-2 space-y-6">
+                <div class="bg-[#1e293b] rounded-2xl border border-gray-800 overflow-hidden shadow-xl">
+                    <div class="p-5 border-b border-gray-800 flex justify-between items-center">
+                        <h3 class="font-bold">League Table</h3>
+                        <span class="text-xs text-cyan-400 font-semibold cursor-pointer">View Full Table →</span>
+                    </div>
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-gray-900/50 text-gray-500 text-[10px] uppercase tracking-wider">
+                            <tr>
+                                <th class="px-5 py-3">Pos</th>
+                                <th class="px-5 py-3">Club</th>
+                                <th class="px-5 py-3 text-center">PL</th>
+                                <th class="px-5 py-3 text-center">GD</th>
+                                <th class="px-5 py-3 text-right pr-8">Pts</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800">
+                            <tr class="hover:bg-gray-800/40 transition">
+                                <td class="px-5 py-4 font-bold text-cyan-400 italic">1</td>
+                                <td class="px-5 py-4 flex items-center"><img src="https://media.api-sports.io/football/teams/50.png" class="w-6 mr-3"> Man City</td>
+                                <td class="px-5 py-4 text-center">36</td>
+                                <td class="px-5 py-4 text-center text-emerald-400">+43</td>
+                                <td class="px-5 py-4 text-right font-bold pr-8">77</td>
+                            </tr>
+                            <tr class="bg-cyan-900/10 hover:bg-cyan-900/20 transition">
+                                <td class="px-5 py-4 font-bold text-cyan-400 italic">2</td>
+                                <td class="px-5 py-4 flex items-center"><img src="https://media.api-sports.io/football/teams/42.png" class="w-6 mr-3"> Arsenal</td>
+                                <td class="px-5 py-4 text-center">36</td>
+                                <td class="px-5 py-4 text-center text-emerald-400">+42</td>
+                                <td class="px-5 py-4 text-right font-bold pr-8">79</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-            `).join('');
-        }
 
-        // Initialize with football
-        window.onload = () => updateLeagues('football');
-    </script>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-[#1e293b] p-5 rounded-2xl border border-gray-800">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase mb-4">Golden Boot race</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center text-sm">
+                                <span>1. Erling Haaland</span>
+                                <span class="font-bold text-cyan-400">32 Goals</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span>2. Mohamed Salah</span>
+                                <span class="font-bold">24 Goals</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-[#1e293b] p-5 rounded-2xl border border-gray-800">
+                        <h3 class="text-xs font-bold text-gray-500 uppercase mb-4">Bad Boys (Red Cards)</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center text-sm">
+                                <span>1. Casemiro</span>
+                                <span class="font-bold text-red-500">2 Reds</span>
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span>2. Bruno Fernandes</span>
+                                <span class="font-bold">1 Red</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-gradient-to-br from-red-900/40 to-[#1e293b] rounded-2xl border border-red-500/20 p-6 shadow-2xl">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-16 h-16 bg-[#0f172a] rounded-full border-2 border-red-500 overflow-hidden">
+                            <img src="https://media.api-sports.io/football/players/1465.png" alt="Martinelli">
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold">Gabriel Martinelli</h3>
+                            <p class="text-xs text-gray-400 uppercase tracking-widest">Left Winger • #11</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-[#0f172a]/60 p-3 rounded-xl border border-gray-800">
+                            <p class="text-[10px] text-gray-500 uppercase">Goals</p>
+                            <p class="text-xl font-bold">11</p>
+                        </div>
+                        <div class="bg-[#0f172a]/60 p-3 rounded-xl border border-gray-800">
+                            <p class="text-[10px] text-gray-500 uppercase">xG</p>
+                            <p class="text-xl font-bold text-emerald-400">0.72</p>
+                        </div>
+                    </div>
+                    <button class="w-full mt-6 py-2.5 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-500 transition">View Full Heatmap</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
 </body>
 </html>

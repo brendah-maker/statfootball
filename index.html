@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StatFootball | Live Pro Dashboard</title>
+    <title>StatFootball Pro | Live 2025-26 Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: #f8fafc; overflow: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #020617; color: #f8fafc; }
         .active-league { background: rgba(34, 211, 238, 0.1); color: #22d3ee; border-left: 4px solid #22d3ee; }
-        .form-dot { width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; margin: 0 2px; color: white; }
+        .form-dot { width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; margin: 0 1px; color: white; }
         .form-W { background-color: #10b981; } .form-D { background-color: #64748b; } .form-L { background-color: #ef4444; }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
@@ -18,19 +18,19 @@
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
-<body class="flex min-h-screen">
+<body class="flex min-h-screen overflow-hidden">
 
     <!-- Sidebar: Top 10 Leagues -->
     <aside class="w-64 bg-[#0f172a] border-r border-slate-800 hidden lg:flex flex-col flex-shrink-0">
         <div class="p-6 border-b border-slate-800/50">
             <h1 class="text-xl font-black text-cyan-400 tracking-tighter italic">STAT<span class="text-white">FOOTBALL</span></h1>
-            <p class="text-[9px] text-slate-500 font-bold mt-1 uppercase tracking-widest">Powered by Sportmonks</p>
+            <p class="text-[9px] text-slate-500 font-bold mt-1 uppercase tracking-widest">API-Sports Dashboard</p>
         </div>
         <nav id="leagueNav" class="flex-1 overflow-y-auto custom-scroll p-4 space-y-1"></nav>
         <div class="p-4 border-t border-slate-800 bg-slate-900/20">
             <div id="apiIndicator" class="flex items-center space-x-2 text-[10px] font-bold text-emerald-400">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>AUTHENTICATED</span>
+                <span>API CONNECTED</span>
             </div>
         </div>
     </aside>
@@ -43,25 +43,25 @@
                 <div class="flex items-center space-x-2 text-cyan-500 text-[10px] font-black uppercase tracking-widest mb-1">
                     <span id="headerLeague">...</span> <span class="text-slate-700">|</span> <span id="headerSeason">Season 2025/2026</span>
                 </div>
-                <h2 id="viewTitle" class="text-4xl font-black text-white tracking-tight leading-none">Loading Data...</h2>
+                <h2 id="viewTitle" class="text-4xl font-black text-white tracking-tight">League Standings</h2>
             </div>
             <div class="flex items-center space-x-3 mt-4 md:mt-0">
-                <div class="bg-red-500/10 border border-red-500/20 px-3 py-1 rounded-full text-[10px] font-bold text-red-500 uppercase tracking-tighter">
-                    <span id="injuryCount">0</span> Injuries Detected
+                <div class="bg-red-500/10 border border-red-500/20 px-3 py-1 rounded-full text-[10px] font-bold text-red-500 uppercase">
+                    <span id="injuryCount">--</span> Injuries
                 </div>
-                <div class="bg-slate-800 px-4 py-2 rounded-xl text-[10px] font-black text-slate-300 uppercase tracking-widest">Sportmonks v3</div>
+                <div class="bg-slate-800 px-4 py-2 rounded-xl text-[10px] font-black text-slate-300 uppercase tracking-widest">Live Data</div>
             </div>
         </header>
 
         <!-- Dashboard Grid -->
         <div class="p-8 grid grid-cols-12 gap-8">
             
-            <!-- Standings -->
+            <!-- Standings Table -->
             <div class="col-span-12 xl:col-span-8">
                 <div class="bg-[#0f172a] rounded-3xl border border-slate-800 overflow-hidden shadow-2xl">
                     <div class="px-6 py-4 border-b border-slate-800 bg-slate-900/30 flex justify-between items-center">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">League Standings</span>
-                        <span id="statusLabel" class="text-[9px] bg-slate-800 px-2 py-1 rounded text-slate-500 uppercase font-black">Syncing...</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Official Standings</span>
+                        <span id="syncLabel" class="text-[9px] bg-slate-800 px-2 py-1 rounded text-slate-500 uppercase font-black tracking-widest">Connecting...</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
@@ -70,14 +70,14 @@
                                     <th class="px-6 py-5">#</th>
                                     <th class="px-6 py-5">Club</th>
                                     <th class="px-4 py-5 text-center">MP</th>
-                                    <th class="px-2 py-5 text-center text-emerald-500">W</th>
+                                    <th class="px-2 py-5 text-center">W</th>
                                     <th class="px-2 py-5 text-center">D</th>
-                                    <th class="px-2 py-5 text-center text-red-500">L</th>
+                                    <th class="px-2 py-5 text-center">L</th>
                                     <th class="px-2 py-5 text-center">GF</th>
                                     <th class="px-2 py-5 text-center">GA</th>
                                     <th class="px-4 py-5 text-center">GD</th>
                                     <th class="px-4 py-5 text-center">Pts</th>
-                                    <th class="px-6 py-5 text-right">Form</th>
+                                    <th class="px-6 py-5 text-right">Last 5</th>
                                 </tr>
                             </thead>
                             <tbody id="standingsBody" class="divide-y divide-slate-800/40 text-sm"></tbody>
@@ -88,237 +88,162 @@
 
             <!-- Stats Columns -->
             <div class="col-span-12 xl:col-span-4 space-y-6">
-                <div class="bg-[#0f172a] p-6 rounded-3xl border border-slate-800 shadow-xl">
+                <!-- Top Scorers -->
+                <div class="bg-[#0f172a] p-6 rounded-3xl border border-slate-800">
                     <h4 class="text-xs font-black text-slate-500 uppercase mb-4 flex justify-between">Top Scorers <i class="fa-solid fa-fire text-orange-500"></i></h4>
                     <div id="topScorers" class="space-y-2"></div>
                 </div>
 
-                <div class="bg-[#0f172a] p-6 rounded-3xl border border-slate-800 shadow-xl">
-                    <h4 class="text-xs font-black text-slate-500 uppercase mb-4 flex justify-between">Most Assists <i class="fa-solid fa-magic text-cyan-400"></i></h4>
+                <!-- Top Assists -->
+                <div class="bg-[#0f172a] p-6 rounded-3xl border border-slate-800">
+                    <h4 class="text-xs font-black text-slate-500 uppercase mb-4 flex justify-between">Top Assists <i class="fa-solid fa-magic text-cyan-400"></i></h4>
                     <div id="topAssists" class="space-y-2"></div>
                 </div>
 
-                <div class="bg-[#0f172a] p-6 rounded-3xl border border-slate-800 shadow-xl">
-                    <h4 class="text-xs font-black text-slate-500 uppercase mb-4 flex justify-between">Sidelined Players <i class="fa-solid fa-truck-medical text-red-500"></i></h4>
-                    <div id="injuryList" class="space-y-2"></div>
+                <!-- Clean Sheets -->
+                <div class="bg-[#0f172a] p-6 rounded-3xl border border-slate-800">
+                    <h4 class="text-xs font-black text-slate-500 uppercase mb-4 flex justify-between">Yellow Cards <i class="fa-solid fa-clone text-yellow-500"></i></h4>
+                    <div id="topYellows" class="space-y-2"></div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Modal for Trophies -->
-    <div id="teamModal" class="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-[#0f172a] border border-slate-800 w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl relative p-12">
-            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <div class="text-center mb-10">
-                <img id="modalLogo" src="" class="w-24 h-24 mx-auto mb-4 bg-slate-900 rounded-2xl p-2">
-                <h2 id="modalTeamName" class="text-3xl font-black">--</h2>
-                <p id="modalCountry" class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-2 italic"></p>
-            </div>
-            <h4 class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 border-b border-slate-800 pb-2">Trophy Cabinet</h4>
-            <div id="trophyGrid" class="grid grid-cols-2 gap-4"></div>
-        </div>
-    </div>
-
     <script>
-        const CONFIG = {
-            TOKEN: "65a3207dce4446073729a1e509ba3278",
-            BASE: "https://api.sportmonks.com/v3/football"
-        };
+        const API_KEY = "65a3207dce4446073729a1e509ba3278";
+        const BASE_URL = "https://v3.football.api-sports.io";
 
         const LEAGUES = [
-            { id: 8, name: "Premier League", country: "ENG" },
-            { id: 564, name: "La Liga", country: "ESP" },
-            { id: 82, name: "Bundesliga", country: "GER" },
-            { id: 384, name: "Serie A", country: "ITA" },
-            { id: 301, name: "Ligue 1", country: "FRA" },
-            { id: 72, name: "Eredivisie", country: "NED" },
-            { id: 462, name: "Primeira Liga", country: "POR" },
-            { id: 24, name: "Championship", country: "ENG" },
-            { id: 600, name: "Série A", country: "BRA" },
-            { id: 1601, name: "MLS", country: "USA" }
+            { id: 39, name: "Premier League", country: "ENG" },
+            { id: 140, name: "La Liga", country: "ESP" },
+            { id: 78, name: "Bundesliga", country: "GER" },
+            { id: 135, name: "Serie A", country: "ITA" },
+            { id: 61, name: "Ligue 1", country: "FRA" },
+            { id: 88, name: "Eredivisie", country: "NED" },
+            { id: 94, name: "Primeira Liga", country: "POR" },
+            { id: 71, name: "Série A", country: "BRA" },
+            { id: 253, name: "MLS", country: "USA" },
+            { id: 307, name: "Pro League", country: "KSA" }
         ];
 
-        let currentSeasonId = null;
-        let currentLeagueId = 8;
+        let activeSeason = 2025;
+        let activeLeagueId = 39;
 
-        async function api(endpoint) {
+        async function fetchAPI(endpoint) {
             try {
-                const response = await fetch(`${CONFIG.BASE}/${endpoint}`, {
-                    headers: { "Authorization": CONFIG.TOKEN, "Accept": "application/json" }
+                const response = await fetch(`${BASE_URL}/${endpoint}`, {
+                    headers: { "x-apisports-key": API_KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
                 });
-                const res = await response.json();
-                return res.data;
-            } catch (e) { console.error("Fetch Error:", e); return null; }
+                const data = await response.json();
+                return data.response;
+            } catch (e) { console.error(e); return []; }
         }
 
         async function loadDashboard(leagueId) {
-            currentLeagueId = leagueId;
+            activeLeagueId = leagueId;
             const league = LEAGUES.find(l => l.id === leagueId);
             document.getElementById('headerLeague').innerText = league.name;
-            document.getElementById('viewTitle').innerText = "Syncing Standings...";
-            document.getElementById('statusLabel').innerText = "DETECTING SEASONS...";
+            document.getElementById('syncLabel').innerText = "SYNCING...";
             renderSidebar();
 
-            // Reset UI Loading
-            document.getElementById('standingsBody').innerHTML = '<tr><td colspan="11" class="py-28 loading-shimmer"></td></tr>';
+            // Clear UI
+            document.getElementById('standingsBody').innerHTML = '<tr><td colspan="11" class="py-24 loading-shimmer"></td></tr>';
             document.getElementById('topScorers').innerHTML = '';
             document.getElementById('topAssists').innerHTML = '';
-            document.getElementById('injuryList').innerHTML = '';
+            document.getElementById('topYellows').innerHTML = '';
 
-            // 1. DYNAMIC SEASON DETECTION
-            const leagueData = await api(`leagues/${leagueId}?include=seasons`);
-            if (!leagueData || !leagueData.seasons) {
-                showError("API limit or League not found.");
-                return;
-            }
-
-            // Find 2025/2026, or current, or newest available
-            let targetSeason = leagueData.seasons.find(s => s.name === "2025/2026") || 
-                               leagueData.seasons.find(s => s.is_current) || 
-                               leagueData.seasons.slice().reverse()[0];
-
-            currentSeasonId = targetSeason.id;
-            document.getElementById('headerSeason').innerText = `Season ${targetSeason.name}`;
-            document.getElementById('viewTitle').innerText = `${league.name} Standings`;
-
-            // 2. FETCH STANDINGS (Includes: Team, Stats Details, and Recent Form)
-            let standings = await api(`standings/seasons/${currentSeasonId}?include=participant;details.type;form`);
+            // Step 1: Fetch Standings
+            let standings = await fetchAPI(`standings?league=${leagueId}&season=${activeSeason}`);
             
-            // Fallback: If newest season is empty, try the previous one
-            if ((!standings || standings.length === 0) && leagueData.seasons.length > 1) {
-                targetSeason = leagueData.seasons[leagueData.seasons.length - 2];
-                currentSeasonId = targetSeason.id;
-                document.getElementById('headerSeason').innerText = `Season ${targetSeason.name} (Archive)`;
-                standings = await api(`standings/seasons/${currentSeasonId}?include=participant;details.type;form`);
-            }
-
-            if (standings && standings.length > 0) {
-                renderStandings(standings);
-                document.getElementById('statusLabel').innerText = "DATA LIVE";
+            // Fallback: If 2025 is empty, try 2024
+            if (!standings || standings.length === 0) {
+                activeSeason = 2024;
+                document.getElementById('headerSeason').innerText = `Season 2024/2025`;
+                standings = await fetchAPI(`standings?league=${leagueId}&season=${activeSeason}`);
             } else {
-                showError("No standings data found for this league on this plan.");
+                document.getElementById('headerSeason').innerText = `Season 2025/2026`;
             }
 
-            // 3. STATS & INJURIES
-            const players = await api(`topscorers/seasons/${currentSeasonId}?include=player;team`);
-            if (players) {
-                renderStats(players.slice(0, 5), 'topScorers', 'goals', 'text-cyan-400');
-                renderStats(players.slice(0, 3), 'topAssists', 'assists', 'text-emerald-400');
+            if (standings && standings[0]) {
+                renderStandings(standings[0].league.standings[0]);
+                document.getElementById('syncLabel').innerText = "DATA LIVE";
+            } else {
+                document.getElementById('standingsBody').innerHTML = '<tr><td colspan="11" class="p-10 text-center text-slate-500">No data found for this season.</td></tr>';
+                document.getElementById('syncLabel').innerText = "ERROR";
             }
 
-            const injuries = await api(`injuries/seasons/${currentSeasonId}?include=player`);
-            if (injuries) renderInjuries(injuries);
+            // Step 2: Fetch Player Stats
+            const scorers = await fetchAPI(`players/topscorers?league=${leagueId}&season=${activeSeason}`);
+            renderStatList(scorers?.slice(0, 5), 'topScorers', 'goals.total', 'text-cyan-400');
+
+            const assists = await fetchAPI(`players/topassists?league=${leagueId}&season=${activeSeason}`);
+            renderStatList(assists?.slice(0, 5), 'topAssists', 'goals.assists', 'text-cyan-400');
+
+            const yellows = await fetchAPI(`players/topyellowcards?league=${leagueId}&season=${activeSeason}`);
+            renderStatList(yellows?.slice(0, 3), 'topYellows', 'cards.yellow', 'text-yellow-500');
+
+            // Step 3: Injuries
+            const injuries = await fetchAPI(`injuries?league=${leagueId}&season=${activeSeason}`);
+            document.getElementById('injuryCount').innerText = injuries?.length || 0;
         }
 
         function renderStandings(data) {
-            data.sort((a, b) => a.position - b.position);
-            
-            document.getElementById('standingsBody').innerHTML = data.map(row => {
-                const team = row.participant;
-                const form = row.form || [];
-                const d = row.details.reduce((acc, curr) => { 
-                    if(curr.type && curr.type.code) acc[curr.type.code] = curr.value; 
-                    return acc; 
-                }, {});
-
-                const formHtml = form.slice(0, 5).map(f => {
-                    const r = f.form ? f.form.toUpperCase() : '-';
-                    return `<span class="form-dot form-${r}">${r}</span>`;
-                }).join('');
-
+            document.getElementById('standingsBody').innerHTML = data.map(team => {
+                const form = team.form || "";
+                const formHtml = form.split('').map(f => `<span class="form-dot form-${f}">${f}</span>`).join('');
+                
                 return `
-                <tr class="hover:bg-cyan-500/5 transition cursor-pointer group" onclick="showTeam(${team.id}, '${team.name}', '${team.image_path}', '${team.country_id}')">
-                    <td class="px-6 py-5 font-black text-slate-500 text-xs">${row.position}</td>
-                    <td class="px-6 py-5 flex items-center font-bold">
-                        <img src="${team.image_path}" class="w-6 h-6 mr-3 bg-slate-900 rounded p-0.5">
-                        <span class="group-hover:text-cyan-400 transition truncate">${team.name}</span>
+                <tr class="hover:bg-cyan-500/5 transition cursor-pointer group">
+                    <td class="px-6 py-4 font-bold text-slate-500">${team.rank}</td>
+                    <td class="px-6 py-4 flex items-center font-bold">
+                        <img src="${team.team.logo}" class="w-6 h-6 mr-3">
+                        <span class="group-hover:text-cyan-400 transition">${team.team.name}</span>
                     </td>
-                    <td class="px-4 py-5 text-center font-mono text-slate-500 text-xs">${(d.wins || 0) + (d.draws || 0) + (d.losses || 0)}</td>
-                    <td class="px-2 py-5 text-center font-mono text-emerald-500 font-bold">${d.wins || 0}</td>
-                    <td class="px-2 py-5 text-center font-mono text-slate-400 font-bold">${d.draws || 0}</td>
-                    <td class="px-2 py-5 text-center font-mono text-red-500 font-bold">${d.losses || 0}</td>
-                    <td class="px-2 py-5 text-center font-mono text-slate-500 text-xs">${d.goals_for || 0}</td>
-                    <td class="px-2 py-5 text-center font-mono text-slate-500 text-xs">${d.goals_against || 0}</td>
-                    <td class="px-4 py-5 text-center font-mono ${ (d.goals_for - d.goals_against) >= 0 ? 'text-emerald-500' : 'text-red-500'} font-bold">
-                        ${(d.goals_for || 0) - (d.goals_against || 0)}
+                    <td class="px-4 py-4 text-center font-mono text-slate-400 text-xs">${team.all.played}</td>
+                    <td class="px-2 py-4 text-center font-mono text-emerald-500 font-bold">${team.all.win}</td>
+                    <td class="px-2 py-4 text-center font-mono text-slate-400">${team.all.draw}</td>
+                    <td class="px-2 py-4 text-center font-mono text-red-500">${team.all.lose}</td>
+                    <td class="px-2 py-4 text-center font-mono text-slate-500">${team.all.goals.for}</td>
+                    <td class="px-2 py-4 text-center font-mono text-slate-500">${team.all.goals.against}</td>
+                    <td class="px-4 py-4 text-center font-mono ${team.goalsDiff >= 0 ? 'text-emerald-500' : 'text-red-500'} text-xs">
+                        ${team.goalsDiff > 0 ? '+' : ''}${team.goalsDiff}
                     </td>
-                    <td class="px-4 py-5 text-center font-black text-cyan-400 text-lg">${row.points || 0}</td>
-                    <td class="px-6 py-5 text-right">${formHtml}</td>
+                    <td class="px-4 py-4 text-center font-black text-cyan-400 text-lg">${team.points}</td>
+                    <td class="px-6 py-4 text-right">${formHtml}</td>
                 </tr>`;
             }).join('');
         }
 
-        function renderStats(data, id, type, color) {
-            const container = document.getElementById(id);
-            if (!data || data.length === 0) { container.innerHTML = '<p class="text-center text-[10px] text-slate-700 py-6">Data syncing...</p>'; return; }
+        function renderStatList(data, containerId, path, color) {
+            const container = document.getElementById(containerId);
+            if (!data || data.length === 0) { container.innerHTML = '<p class="text-center text-xs text-slate-700 py-4 italic">No data</p>'; return; }
             
-            container.innerHTML = data.map(item => `
+            container.innerHTML = data.map(item => {
+                const val = path.split('.').reduce((o, k) => o[k], item.statistics[0]) || 0;
+                return `
                 <div class="flex items-center justify-between p-3 bg-slate-900/50 rounded-2xl border border-slate-800">
                     <div class="flex items-center space-x-3 overflow-hidden">
-                        <img src="${item.player?.image_path}" class="w-8 h-8 rounded-full border border-slate-700">
+                        <img src="${item.player.photo}" class="w-8 h-8 rounded-full border border-slate-700">
                         <div class="truncate">
-                            <p class="text-[10px] font-bold text-white truncate">${item.player?.display_name || 'N/A'}</p>
-                            <p class="text-[8px] text-slate-500 uppercase truncate font-black">${item.team?.name || '---'}</p>
+                            <p class="text-[10px] font-bold text-white truncate">${item.player.name}</p>
+                            <p class="text-[8px] text-slate-500 uppercase truncate">${item.statistics[0].team.name}</p>
                         </div>
                     </div>
-                    <span class="${color} font-black text-sm">${item.total || 0}</span>
-                </div>`).join('');
-        }
-
-        function renderInjuries(data) {
-            document.getElementById('injuryCount').innerText = data.length;
-            const container = document.getElementById('injuryList');
-            if (data.length === 0) { container.innerHTML = '<p class="text-center text-xs text-slate-700 py-6 italic">No major injuries</p>'; return; }
-            
-            container.innerHTML = data.slice(0, 3).map(inj => `
-                <div class="flex items-center p-3 bg-red-500/5 border border-red-500/10 rounded-2xl">
-                    <img src="${inj.player?.image_path}" class="w-8 h-8 rounded-full mr-3 opacity-60">
-                    <div class="truncate">
-                        <p class="text-[10px] font-bold text-white truncate">${inj.player?.display_name}</p>
-                        <p class="text-[8px] text-red-400 uppercase font-bold truncate">${inj.reason || 'Sidelined'}</p>
-                    </div>
-                </div>`).join('');
-        }
-
-        async function showTeam(id, name, logo, countryId) {
-            document.getElementById('modalTeamName').innerText = name;
-            document.getElementById('modalLogo').src = logo;
-            document.getElementById('modalCountry').innerText = `Club ID: ${id}`;
-            document.getElementById('teamModal').style.display = 'flex';
-            
-            const trophies = await api(`teams/${id}?include=trophies`);
-            const grid = document.getElementById('trophyGrid');
-            const data = trophies?.trophies || [];
-
-            if (data.length === 0) {
-                grid.innerHTML = '<p class="col-span-2 text-center text-xs text-slate-600 py-10">Trophy data not available in this tier</p>';
-            } else {
-                grid.innerHTML = data.map(t => `
-                    <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl flex justify-between items-center shadow-lg">
-                        <span class="text-[10px] font-bold text-slate-400 truncate pr-2">${t.league_name || 'Major Trophy'}</span>
-                        <span class="text-amber-500 font-black">x${t.count || 1}</span>
-                    </div>`).join('');
-            }
+                    <span class="${color} font-black text-sm">${val}</span>
+                </div>`;
+            }).join('');
         }
 
         function renderSidebar() {
             document.getElementById('leagueNav').innerHTML = LEAGUES.map(l => `
-                <button onclick="loadDashboard(${l.id})" class="w-full flex items-center p-3 rounded-xl text-sm transition font-semibold mb-1 ${l.id === currentLeagueId ? 'active-league' : 'text-slate-500 hover:bg-slate-800/50 hover:text-white'}">
-                    <span class="w-8 text-[9px] font-black opacity-30 text-left uppercase">${l.country}</span>
+                <button onclick="loadDashboard(${l.id})" class="w-full flex items-center p-3 rounded-xl text-sm transition font-semibold mb-1 ${l.id === activeLeagueId ? 'active-league' : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'}">
+                    <span class="w-8 text-[9px] font-black opacity-30 text-left">${l.country}</span>
                     <span class="truncate">${l.name}</span>
                 </button>`).join('');
         }
 
-        function showError(msg) {
-            document.getElementById('standingsBody').innerHTML = `<tr><td colspan="11" class="p-20 text-center text-slate-500 font-bold">${msg}</td></tr>`;
-            document.getElementById('statusLabel').innerText = "SYNC FAILED";
-        }
-
-        function closeModal() { document.getElementById('teamModal').style.display = 'none'; }
-
-        // Start App
-        window.onload = () => loadDashboard(8);
+        // Initialize
+        window.onload = () => loadDashboard(39);
     </script>
 </body>
 </html>

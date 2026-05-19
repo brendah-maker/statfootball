@@ -68,117 +68,132 @@
         </div>
     </main>
 
-    <script>
-        // Updated API Config
-        const CONFIG = {
-            KEY: "4160bfd7f958d3ae8c3f9e26e7e52b3a",
-            BASE_URL: "https://v3.football.api-sports.io",
-            SEASON: 2025
-        };
+    // Updated API Config
+const CONFIG = {
+    KEY: "4160bfd7f958d3ae8c3f9e26e7e52b3a",
+    BASE_URL: "https://v3.football.api-sports.io",
+    SEASON: 2024 // Changed from 2025 to 2024 to get current active data
+};
 
-        const LEAGUES = [
-            { id: 39, name: "Premier League", country: "ENG" },
-            { id: 140, name: "La Liga", country: "SPA" },
-            { id: 78, name: "Bundesliga", country: "GER" },
-            { id: 135, name: "Serie A", country: "ITA" },
-            { id: 61, name: "Ligue 1", country: "FRA" }
-        ];
+const LEAGUES = [
+    { id: 39, name: "Premier League", country: "ENG" },
+    { id: 140, name: "La Liga", country: "SPA" },
+    { id: 78, name: "Bundesliga", country: "GER" },
+    { id: 135, name: "Serie A", country: "ITA" },
+    { id: 61, name: "Ligue 1", country: "FRA" },
+    { id: 2, name: "Champions League", country: "EUR" }
+];
 
-        let currentLeague = 39;
+let currentLeague = 39;
 
-        // API Fetch Wrapper with Debugging
-        async function apiFetch(endpoint) {
-            try {
-                const response = await fetch(`${CONFIG.BASE_URL}/${endpoint}`, {
-                    method: "GET",
-                    headers: {
-                        "x-apisports-key": CONFIG.KEY,
-                        "x-rapidapi-host": "v3.football.api-sports.io"
-                    }
-                });
-                const data = await response.json();
-                
-                if (data.errors && Object.keys(data.errors).length > 0) {
-                    console.error("API Error:", data.errors);
-                    document.getElementById('apiStatus').innerHTML = "ERROR";
-                    document.getElementById('apiStatus').classList.replace('bg-gray-800', 'bg-red-500');
-                    return null;
-                }
-                return data.response;
-            } catch (err) {
-                console.error("Network Error:", err);
-                return null;
+async function apiFetch(endpoint) {
+    try {
+        const response = await fetch(`${CONFIG.BASE_URL}/${endpoint}`, {
+            method: "GET",
+            headers: {
+                "x-apisports-key": CONFIG.KEY,
+                "x-rapidapi-host": "v3.football.api-sports.io"
             }
+        });
+        const data = await response.json();
+        
+        if (data.errors && Object.keys(data.errors).length > 0) {
+            console.error("API Error:", data.errors);
+            document.getElementById('apiStatus').innerHTML = "AUTH ERROR";
+            document.getElementById('apiStatus').classList.replace('bg-gray-800', 'bg-red-500');
+            return null;
         }
+        return data.response;
+    } catch (err) {
+        console.error("Network Error:", err);
+        return null;
+    }
+}
 
-        async function loadDashboard(leagueId) {
-            currentLeague = leagueId;
-            updateSidebarUI();
-            document.getElementById('syncStatus').innerText = "Fetching latest data...";
+async function loadDashboard(leagueId) {
+    currentLeague = leagueId;
+    
+    // Update UI Titles
+    const activeLeague = LEAGUES.find(l => l.id === leagueId);
+    document.getElementById('viewTitle').innerText = `${activeLeague.name} Summary`;
+    updateSidebarUI();
+    
+    document.getElementById('syncStatus').innerText = "Fetching latest data...";
+    
+    // Clear current lists to show loading state
+    document.getElementById('standingsBody').innerHTML = '<tr class="loading-shimmer"><td colspan="5" class="h-12"></td></tr>';
+    document.getElementById('topScorersList').innerHTML = '';
+    document.getElementById('topAssistsList').innerHTML = '';
 
-            // 1. Fetch Standings
-            const standings = await apiFetch(`standings?league=${leagueId}&season=${CONFIG.SEASON}`);
-            if (standings && standings[0]) {
-                renderTable(standings[0].league.standings[0]);
-                document.getElementById('syncStatus').innerText = "Live Data Synchronized";
-            }
+    // 1. Fetch Standings
+    const standings = await apiFetch(`standings?league=${leagueId}&season=${CONFIG.SEASON}`);
+    if (standings && standings[0] && standings[0].league.standings[0]) {
+        renderTable(standings[0].league.standings[0]);
+        document.getElementById('syncStatus').innerText = `Live Data Synchronized (${CONFIG.SEASON}/${CONFIG.SEASON + 1})`;
+    } else {
+        document.getElementById('standingsBody').innerHTML = '<tr><td colspan="5" class="p-10 text-center text-gray-500">No data available for this season.</td></tr>';
+    }
 
-            // 2. Fetch Scorers
-            const scorers = await apiFetch(`players/topscorers?league=${leagueId}&season=${CONFIG.SEASON}`);
-            if (scorers) renderLeaderboard(scorers.slice(0, 5), 'topScorersList', 'goals');
+    // 2. Fetch Scorers
+    const scorers = await apiFetch(`players/topscorers?league=${leagueId}&season=${CONFIG.SEASON}`);
+    if (scorers && scorers.length > 0) {
+        renderLeaderboard(scorers.slice(0, 5), 'topScorersList', 'goals');
+    }
 
-            // 3. Fetch Assists
-            const assists = await apiFetch(`players/topassists?league=${leagueId}&season=${CONFIG.SEASON}`);
-            if (assists) renderLeaderboard(assists.slice(0, 5), 'topAssistsList', 'assists');
-        }
+    // 3. Fetch Assists
+    const assists = await apiFetch(`players/topassists?league=${leagueId}&season=${CONFIG.SEASON}`);
+    if (assists && assists.length > 0) {
+        renderLeaderboard(assists.slice(0, 5), 'topAssistsList', 'assists');
+    }
+}
 
-        function renderTable(data) {
-            const html = data.map(team => `
-                <tr class="hover:bg-gray-800/40 border-b border-gray-800/30 transition">
-                    <td class="px-6 py-4 font-bold text-gray-400">${team.rank}</td>
-                    <td class="px-6 py-4 flex items-center font-bold">
-                        <img src="${team.team.logo}" class="w-6 h-6 mr-3" onerror="this.src='https://via.placeholder.com/20'">
-                        ${team.team.name}
-                    </td>
-                    <td class="px-6 py-4 text-center font-mono">${team.all.played}</td>
-                    <td class="px-6 py-4 text-center font-mono ${team.goalsDiff >= 0 ? 'text-emerald-500' : 'text-red-500'}">${team.goalsDiff}</td>
-                    <td class="px-6 py-4 text-right pr-10 font-black text-cyan-400">${team.points}</td>
-                </tr>
-            `).join('');
-            document.getElementById('standingsBody').innerHTML = html;
-        }
+function renderTable(data) {
+    const html = data.map(team => `
+        <tr class="hover:bg-gray-800/40 border-b border-gray-800/30 transition">
+            <td class="px-6 py-4 font-bold text-gray-400">${team.rank}</td>
+            <td class="px-6 py-4 flex items-center font-bold">
+                <img src="${team.team.logo}" class="w-6 h-6 mr-3" onerror="this.src='https://via.placeholder.com/20'">
+                ${team.team.name}
+            </td>
+            <td class="px-6 py-4 text-center font-mono">${team.all.played}</td>
+            <td class="px-6 py-4 text-center font-mono ${team.goalsDiff >= 0 ? 'text-emerald-500' : 'text-red-500'}">${team.goalsDiff}</td>
+            <td class="px-6 py-4 text-right pr-10 font-black text-cyan-400">${team.points}</td>
+        </tr>
+    `).join('');
+    document.getElementById('standingsBody').innerHTML = html;
+}
 
-        function renderLeaderboard(data, containerId, statType) {
-            const html = data.map((item, i) => `
-                <div class="flex items-center justify-between bg-[#0f172a] p-3 rounded-xl border border-gray-800 hover:border-cyan-500/50 transition">
-                    <div class="flex items-center space-x-3">
-                        <img src="${item.player.photo}" class="w-8 h-8 rounded-full bg-gray-800">
-                        <div>
-                            <p class="text-xs font-bold leading-tight">${item.player.name}</p>
-                            <p class="text-[9px] text-gray-500 uppercase">${item.statistics[0].team.name}</p>
-                        </div>
-                    </div>
-                    <span class="font-black text-cyan-400">
-                        ${statType === 'goals' ? item.statistics[0].goals.total : (item.statistics[0].goals.assists || 0)}
-                    </span>
+function renderLeaderboard(data, containerId, statType) {
+    const html = data.map((item, i) => `
+        <div class="flex items-center justify-between bg-[#0f172a] p-3 rounded-xl border border-gray-800 hover:border-cyan-500/50 transition">
+            <div class="flex items-center space-x-3">
+                <img src="${item.player.photo}" class="w-8 h-8 rounded-full bg-gray-800">
+                <div>
+                    <p class="text-xs font-bold leading-tight">${item.player.name}</p>
+                    <p class="text-[9px] text-gray-500 uppercase">${item.statistics[0].team.name}</p>
                 </div>
-            `).join('');
-            document.getElementById(containerId).innerHTML = html;
-        }
+            </div>
+            <span class="font-black text-cyan-400">
+                ${statType === 'goals' ? item.statistics[0].goals.total : (item.statistics[0].goals.assists || 0)}
+            </span>
+        </div>
+    `).join('');
+    document.getElementById(containerId).innerHTML = html;
+}
 
-        function updateSidebarUI() {
-            const nav = document.getElementById('sidebarLeagues');
-            nav.innerHTML = LEAGUES.map(l => `
-                <button onclick="loadDashboard(${l.id})" 
-                        class="w-full flex items-center p-3 rounded-xl transition text-sm ${l.id === currentLeague ? 'active-league' : 'text-gray-400 hover:text-white hover:bg-gray-800'}">
-                    <span class="mr-3 text-[9px] font-bold opacity-50 w-8">${l.country}</span>
-                    <span class="font-semibold">${l.name}</span>
-                </button>
-            `).join('');
-        }
+function updateSidebarUI() {
+    const nav = document.getElementById('sidebarLeagues');
+    nav.innerHTML = LEAGUES.map(l => `
+        <button onclick="loadDashboard(${l.id})" 
+                class="w-full flex items-center p-3 rounded-xl transition text-sm ${l.id === currentLeague ? 'active-league' : 'text-gray-400 hover:text-white hover:bg-gray-800'}">
+            <span class="mr-3 text-[9px] font-bold opacity-50 w-8">${l.country}</span>
+            <span class="font-semibold">${l.name}</span>
+        </button>
+    `).join('');
+}
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => loadDashboard(39));
-    </script>
+// Initialize
+document.addEventListener('DOMContentLoaded', () => loadDashboard(39));
+    
 </body>
 </html>

@@ -3,67 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StatFootball | Dashboard</title>
+    <title>StatFootball | Live Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .hidden-rows { display: none; }
-        .expanded .hidden-rows { display: table-row; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .active-league { background: rgba(8, 145, 178, 0.2); color: #22d3ee; border-left: 4px solid #22d3ee; }
+        .active-league { background: rgba(34, 211, 238, 0.2); color: #22d3ee; border-left: 4px solid #22d3ee; }
+        .loading-shimmer { background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
 <body class="bg-[#0f172a] text-gray-100 flex min-h-screen font-sans">
 
-    <aside class="w-72 bg-[#1e293b] border-r border-gray-800 hidden lg:flex flex-col fixed h-full overflow-y-auto">
-        <div class="p-6 sticky top-0 bg-[#1e293b] z-10 border-b border-gray-800/50">
-            <h1 class="text-xl font-bold text-cyan-400 tracking-tight mb-2">STAT<span class="text-white">FOOTBALL</span></h1>
-            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-4">Major Global Leagues</p>
-            <input type="text" id="playerSearchInput" placeholder="Search Player (e.g. Martinelli)" 
-                   class="w-full bg-[#0f172a] border border-gray-700 rounded-lg p-2 text-xs focus:border-cyan-400 outline-none">
+    <aside class="w-72 bg-[#1e293b] border-r border-gray-800 hidden lg:flex flex-col fixed h-full">
+        <div class="p-6 border-b border-gray-800/50">
+            <h1 class="text-xl font-bold text-cyan-400 tracking-tight mb-4">STAT<span class="text-white">FOOTBALL</span></h1>
+            <input type="text" id="playerSearchInput" placeholder="Search (e.g. Martinelli)" 
+                   class="w-full bg-[#0f172a] border border-gray-700 rounded-lg p-2 text-xs focus:ring-1 focus:ring-cyan-400 outline-none">
         </div>
-        
-        <nav id="sidebarLeagues" class="flex-1 px-4 py-6 space-y-1"></nav>
-
-        <div class="mt-auto sticky bottom-0 bg-[#1e293b] p-6 border-t border-gray-800">
-            <div class="bg-[#0f172a] p-4 rounded-xl border border-gray-800">
-                <div class="flex items-center space-x-3">
-                    <img src="https://media.api-sports.io/football/teams/42.png" class="w-8 h-8">
-                    <span class="font-bold text-sm">Arsenal FC</span>
-                </div>
-            </div>
-        </div>
+        <nav id="sidebarLeagues" class="flex-1 px-4 py-4 space-y-1 overflow-y-auto"></nav>
     </aside>
 
     <main class="flex-1 lg:ml-72 p-6 lg:p-10">
-        <header class="mb-10">
-            <h2 id="viewTitle" class="text-3xl font-extrabold tracking-tight">Premier League Summary</h2>
-            <p id="viewSubtitle" class="text-gray-400 mt-1">Season 2025 • Live API Data</p>
+        <header class="mb-10 flex justify-between items-end">
+            <div>
+                <h2 id="viewTitle" class="text-3xl font-extrabold tracking-tight">Premier League Summary</h2>
+                <p class="text-gray-500 text-sm mt-1">Season 2025 • <span id="syncStatus" class="text-cyan-500">Connecting to API...</span></p>
+            </div>
+            <div id="apiStatus" class="px-3 py-1 rounded-full text-[10px] font-bold bg-gray-800">READY</div>
         </header>
 
-        <section id="playerProfileView" class="hidden mb-10">
-            <div class="bg-gradient-to-r from-red-600 to-red-900 rounded-3xl p-8 flex items-center gap-8 shadow-2xl relative">
-                <img id="profilePhoto" src="" class="w-32 h-32 rounded-full border-4 border-white/20 bg-gray-900">
-                <div>
-                    <h2 id="profileName" class="text-4xl font-black uppercase italic text-white"></h2>
-                    <p id="profileTeam" class="text-white/70 font-bold tracking-widest uppercase text-sm"></p>
-                    <div class="flex gap-4 mt-4">
-                        <div class="bg-black/20 px-4 py-2 rounded-lg text-center"><p class="text-[10px]">GOALS</p><p id="statGoals" class="text-xl font-black">0</p></div>
-                        <div class="bg-black/20 px-4 py-2 rounded-lg text-center"><p class="text-[10px]">ASSISTS</p><p id="statAssists" class="text-xl font-black">0</p></div>
-                    </div>
-                </div>
-                <button onclick="closeProfile()" class="absolute top-4 right-6 text-white/50 hover:text-white"><i class="fa-solid fa-times"></i></button>
-            </div>
-        </section>
-
-        <div id="dashboardContent" class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
             <div class="xl:col-span-8">
                 <div class="bg-[#1e293b] rounded-3xl border border-gray-800 overflow-hidden shadow-2xl">
-                    <div class="p-6 border-b border-gray-800 bg-gray-800/30 font-bold">Standings</div>
+                    <div class="p-5 border-b border-gray-800 bg-gray-800/20 flex justify-between">
+                        <span class="font-bold">League Standings</span>
+                    </div>
                     <table class="w-full text-left" id="leagueTable">
-                        <thead class="bg-gray-900/50 text-gray-500 text-[10px] uppercase">
+                        <thead class="bg-gray-900/50 text-gray-500 text-[10px] uppercase font-bold">
                             <tr>
                                 <th class="px-6 py-4">Pos</th>
                                 <th class="px-6 py-4">Club</th>
@@ -72,18 +48,20 @@
                                 <th class="px-6 py-4 text-right pr-10">Pts</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-800/50"></tbody>
+                        <tbody class="divide-y divide-gray-800/50" id="standingsBody">
+                            <tr class="loading-shimmer"><td colspan="5" class="h-12"></td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="xl:col-span-4 space-y-6">
                 <div class="bg-[#1e293b] p-6 rounded-3xl border border-gray-800">
-                    <h3 class="text-xs font-black text-gray-500 uppercase mb-4">Top Scorers</h3>
+                    <h3 class="text-xs font-black text-gray-500 uppercase mb-4 flex justify-between">Top Scorers <i class="fa-solid fa-bolt text-amber-400"></i></h3>
                     <div id="topScorersList" class="space-y-3"></div>
                 </div>
                 <div class="bg-[#1e293b] p-6 rounded-3xl border border-gray-800">
-                    <h3 class="text-xs font-black text-gray-500 uppercase mb-4">Most Assists</h3>
+                    <h3 class="text-xs font-black text-gray-500 uppercase mb-4 flex justify-between">Most Assists <i class="fa-solid fa-magic text-cyan-400"></i></h3>
                     <div id="topAssistsList" class="space-y-3"></div>
                 </div>
             </div>
@@ -91,95 +69,116 @@
     </main>
 
     <script>
-        const API_KEY = "4160bfd7f958d3ae8c3f9e26e7e52b3a";
-        const headers = { "x-apisports-key": API_KEY };
-        const SEASON = 2025;
+        // Updated API Config
+        const CONFIG = {
+            KEY: "4160bfd7f958d3ae8c3f9e26e7e52b3a",
+            BASE_URL: "https://v3.football.api-sports.io",
+            SEASON: 2025
+        };
 
         const LEAGUES = [
-            { id: 39, name: "Premier League", country: "England" },
-            { id: 140, name: "La Liga", country: "Spain" },
-            { id: 78, name: "Bundesliga", country: "Germany" },
-            { id: 135, name: "Serie A", country: "Italy" },
-            { id: 61, name: "Ligue 1", country: "France" },
-            { id: 2, name: "Champions League", country: "Europe" }
+            { id: 39, name: "Premier League", country: "ENG" },
+            { id: 140, name: "La Liga", country: "SPA" },
+            { id: 78, name: "Bundesliga", country: "GER" },
+            { id: 135, name: "Serie A", country: "ITA" },
+            { id: 61, name: "Ligue 1", country: "FRA" }
         ];
 
-        // Sidebar Init
-        function initSidebar() {
-            document.getElementById('sidebarLeagues').innerHTML = LEAGUES.map(l => `
-                <button onclick="loadLeague(${l.id}, '${l.name}')" class="w-full text-left p-3 rounded-xl text-gray-400 hover:bg-gray-800 hover:text-white transition text-sm">
-                    <span class="mr-2 opacity-30 text-[10px] font-bold uppercase">${l.country.slice(0,3)}</span> ${l.name}
+        let currentLeague = 39;
+
+        // API Fetch Wrapper with Debugging
+        async function apiFetch(endpoint) {
+            try {
+                const response = await fetch(`${CONFIG.BASE_URL}/${endpoint}`, {
+                    method: "GET",
+                    headers: {
+                        "x-apisports-key": CONFIG.KEY,
+                        "x-rapidapi-host": "v3.football.api-sports.io"
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.errors && Object.keys(data.errors).length > 0) {
+                    console.error("API Error:", data.errors);
+                    document.getElementById('apiStatus').innerHTML = "ERROR";
+                    document.getElementById('apiStatus').classList.replace('bg-gray-800', 'bg-red-500');
+                    return null;
+                }
+                return data.response;
+            } catch (err) {
+                console.error("Network Error:", err);
+                return null;
+            }
+        }
+
+        async function loadDashboard(leagueId) {
+            currentLeague = leagueId;
+            updateSidebarUI();
+            document.getElementById('syncStatus').innerText = "Fetching latest data...";
+
+            // 1. Fetch Standings
+            const standings = await apiFetch(`standings?league=${leagueId}&season=${CONFIG.SEASON}`);
+            if (standings && standings[0]) {
+                renderTable(standings[0].league.standings[0]);
+                document.getElementById('syncStatus').innerText = "Live Data Synchronized";
+            }
+
+            // 2. Fetch Scorers
+            const scorers = await apiFetch(`players/topscorers?league=${leagueId}&season=${CONFIG.SEASON}`);
+            if (scorers) renderLeaderboard(scorers.slice(0, 5), 'topScorersList', 'goals');
+
+            // 3. Fetch Assists
+            const assists = await apiFetch(`players/topassists?league=${leagueId}&season=${CONFIG.SEASON}`);
+            if (assists) renderLeaderboard(assists.slice(0, 5), 'topAssistsList', 'assists');
+        }
+
+        function renderTable(data) {
+            const html = data.map(team => `
+                <tr class="hover:bg-gray-800/40 border-b border-gray-800/30 transition">
+                    <td class="px-6 py-4 font-bold text-gray-400">${team.rank}</td>
+                    <td class="px-6 py-4 flex items-center font-bold">
+                        <img src="${team.team.logo}" class="w-6 h-6 mr-3" onerror="this.src='https://via.placeholder.com/20'">
+                        ${team.team.name}
+                    </td>
+                    <td class="px-6 py-4 text-center font-mono">${team.all.played}</td>
+                    <td class="px-6 py-4 text-center font-mono ${team.goalsDiff >= 0 ? 'text-emerald-500' : 'text-red-500'}">${team.goalsDiff}</td>
+                    <td class="px-6 py-4 text-right pr-10 font-black text-cyan-400">${team.points}</td>
+                </tr>
+            `).join('');
+            document.getElementById('standingsBody').innerHTML = html;
+        }
+
+        function renderLeaderboard(data, containerId, statType) {
+            const html = data.map((item, i) => `
+                <div class="flex items-center justify-between bg-[#0f172a] p-3 rounded-xl border border-gray-800 hover:border-cyan-500/50 transition">
+                    <div class="flex items-center space-x-3">
+                        <img src="${item.player.photo}" class="w-8 h-8 rounded-full bg-gray-800">
+                        <div>
+                            <p class="text-xs font-bold leading-tight">${item.player.name}</p>
+                            <p class="text-[9px] text-gray-500 uppercase">${item.statistics[0].team.name}</p>
+                        </div>
+                    </div>
+                    <span class="font-black text-cyan-400">
+                        ${statType === 'goals' ? item.statistics[0].goals.total : (item.statistics[0].goals.assists || 0)}
+                    </span>
+                </div>
+            `).join('');
+            document.getElementById(containerId).innerHTML = html;
+        }
+
+        function updateSidebarUI() {
+            const nav = document.getElementById('sidebarLeagues');
+            nav.innerHTML = LEAGUES.map(l => `
+                <button onclick="loadDashboard(${l.id})" 
+                        class="w-full flex items-center p-3 rounded-xl transition text-sm ${l.id === currentLeague ? 'active-league' : 'text-gray-400 hover:text-white hover:bg-gray-800'}">
+                    <span class="mr-3 text-[9px] font-bold opacity-50 w-8">${l.country}</span>
+                    <span class="font-semibold">${l.name}</span>
                 </button>
             `).join('');
         }
 
-        // Fetch Data
-        async function loadLeague(id, name) {
-            document.getElementById('viewTitle').innerText = name + " Summary";
-            try {
-                // Standings
-                const sRes = await fetch(`https://v3.football.api-sports.io/standings?league=${id}&season=${SEASON}`, { headers });
-                const sData = await sRes.json();
-                renderTable(sData.response[0].league.standings[0]);
-
-                // Scorers
-                const scRes = await fetch(`https://v3.football.api-sports.io/players/topscorers?league=${id}&season=${SEASON}`, { headers });
-                const scData = await scRes.json();
-                renderList(scData.response.slice(0, 5), 'topScorersList', 'goals');
-
-                // Assists
-                const asRes = await fetch(`https://v3.football.api-sports.io/players/topassists?league=${id}&season=${SEASON}`, { headers });
-                const asData = await asRes.json();
-                renderList(asData.response.slice(0, 5), 'topAssistsList', 'assists');
-
-            } catch (e) { console.error("API Error:", e); }
-        }
-
-        function renderTable(data) {
-            document.querySelector("#leagueTable tbody").innerHTML = data.map(t => `
-                <tr class="hover:bg-gray-800/50 border-b border-gray-800/30">
-                    <td class="px-6 py-4 font-bold">${t.rank}</td>
-                    <td class="px-6 py-4 flex items-center font-bold"><img src="${t.team.logo}" class="w-5 h-5 mr-3">${t.team.name}</td>
-                    <td class="px-6 py-4 text-center text-gray-400">${t.all.played}</td>
-                    <td class="px-6 py-4 text-center ${t.goalsDiff > 0 ? 'text-emerald-500' : 'text-red-500'}">${t.goalsDiff}</td>
-                    <td class="px-6 py-4 text-right pr-10 font-black">${t.points}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderList(data, container, type) {
-            document.getElementById(container).innerHTML = data.map(p => `
-                <div class="flex items-center justify-between bg-[#0f172a] p-3 rounded-xl border border-gray-800 text-xs">
-                    <div class="flex items-center space-x-3">
-                        <img src="${p.player.photo}" class="w-8 h-8 rounded-full">
-                        <span class="font-bold">${p.player.name}</span>
-                    </div>
-                    <span class="font-black text-cyan-400">${type === 'goals' ? p.statistics[0].goals.total : p.statistics[0].goals.assists || 0}</span>
-                </div>
-            `).join('');
-        }
-
-        // Search Player
-        document.getElementById('playerSearchInput').addEventListener('keypress', async (e) => {
-            if (e.key === 'Enter') {
-                const res = await fetch(`https://v3.football.api-sports.io/players?search=${e.target.value}&season=${SEASON}`, { headers });
-                const data = await res.json();
-                if (data.response.length > 0) {
-                    const p = data.response[0];
-                    document.getElementById('playerProfileView').classList.remove('hidden');
-                    document.getElementById('profileName').innerText = p.player.name;
-                    document.getElementById('profilePhoto').src = p.player.photo;
-                    document.getElementById('profileTeam').innerText = p.statistics[0].team.name;
-                    document.getElementById('statGoals').innerText = p.statistics[0].goals.total || 0;
-                    document.getElementById('statAssists').innerText = p.statistics[0].goals.assists || 0;
-                }
-            }
-        });
-
-        function closeProfile() { document.getElementById('playerProfileView').classList.add('hidden'); }
-
-        initSidebar();
-        loadLeague(39, 'Premier League');
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => loadDashboard(39));
     </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StatFootball | Premium Live Hub</title>
+    <title>StatFootball | Live Pro Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -13,53 +13,49 @@
         .active-tab { border-bottom: 3px solid #4f46e5; color: #4f46e5; }
         .form-dot { width: 20px; height: 20px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; margin: 0 1px; color: white; }
         .form-W { background-color: #10b981; } .form-D { background-color: #94a3b8; } .form-L { background-color: #f43f5e; }
-        .card-shadow { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
-        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .card-shadow { box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.05); }
+        .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .loading-shimmer { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .round-pill { flex-shrink: 0; padding: 6px 16px; border-radius: 99px; font-size: 11px; font-weight: 800; border: 1px solid #e2e8f0; transition: all 0.2s; cursor: pointer; background: white; color: #64748b; }
+        .round-pill.active { background: #4f46e5; color: white; border-color: #4f46e5; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2); }
+        @keyframes live-pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        .animate-live { animation: live-pulse 2s infinite; }
     </style>
 </head>
 <body class="flex min-h-screen overflow-hidden">
 
     <!-- Sidebar: Top 15 Leagues -->
     <aside class="w-64 bg-white border-r border-slate-200 hidden lg:flex flex-col flex-shrink-0 z-20">
-        <div class="p-8 border-b border-slate-100">
+        <div class="p-8 border-b border-slate-100 text-center">
             <h1 class="text-2xl font-black text-indigo-600 italic leading-none">STAT<span class="text-slate-900">FOOTBALL</span></h1>
-            <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest">Global Analytics</p>
         </div>
         <nav id="leagueNav" class="flex-1 overflow-y-auto custom-scroll p-4 space-y-1"></nav>
         <div class="p-6 border-t border-slate-100 bg-slate-50/50">
             <div class="flex items-center space-x-2 text-[10px] font-bold text-emerald-600 uppercase">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Systems Active</span>
+                <span id="apiStatus">System Online</span>
             </div>
         </div>
     </aside>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-screen overflow-y-auto custom-scroll">
-        <!-- Header -->
         <header class="p-8 pb-0 sticky top-0 bg-white/90 backdrop-blur-md z-10 border-b border-slate-100">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6">
+            <div class="flex justify-between items-end mb-6">
                 <div>
                     <div class="flex items-center space-x-3 text-indigo-500 text-[11px] font-black uppercase tracking-widest mb-1">
-                        <span id="headerLeague">Premier League</span> 
-                        <span class="text-slate-300">|</span> 
-                        <select id="seasonSelector" onchange="changeSeason(this.value)" class="bg-indigo-50 text-indigo-600 border-none outline-none font-black text-[11px] cursor-pointer rounded px-1">
-                            <option value="2025">Season 2025/26</option>
-                            <option value="2024">Season 2024/25</option>
-                            <option value="2023">Season 2023/24</option>
+                        <span id="headerLeague">...</span> <span class="text-slate-300">|</span> 
+                        <select id="seasonSelector" onchange="changeSeason(this.value)" class="bg-transparent border-none font-black cursor-pointer">
+                            <option value="2025">2025/26</option><option value="2024">2024/25</option><option value="2023">2023/24</option>
                         </select>
                     </div>
-                    <h2 id="viewTitle" class="text-4xl font-extrabold text-slate-900 tracking-tight leading-none">Dashboard</h2>
+                    <h2 id="viewTitle" class="text-3xl font-extrabold text-slate-900 tracking-tight leading-none">Dashboard</h2>
                 </div>
             </div>
-            
             <nav class="flex space-x-8">
-                <button onclick="switchTab('summary')" id="tab-summary" class="pb-4 text-sm font-bold text-slate-400 hover:text-slate-900 transition-all active-tab">Summary</button>
-                <button onclick="switchTab('matches')" id="tab-matches" class="pb-4 text-sm font-bold text-slate-400 hover:text-slate-900 transition-all">Matches</button>
-                <button onclick="switchTab('predictions')" id="tab-predictions" class="pb-4 text-sm font-bold text-slate-400 hover:text-slate-900 transition-all">Predictions</button>
+                <button onclick="switchTab('summary')" id="tab-summary" class="pb-4 text-sm font-bold text-slate-400 active-tab">Summary</button>
+                <button onclick="switchTab('matches')" id="tab-matches" class="pb-4 text-sm font-bold text-slate-400">Fixtures & Live</button>
+                <button onclick="switchTab('predictions')" id="tab-predictions" class="pb-4 text-sm font-bold text-slate-400">Predictions</button>
             </nav>
         </header>
 
@@ -67,262 +63,96 @@
             <!-- SUMMARY VIEW -->
             <div id="view-summary" class="space-y-8">
                 <section class="bg-white rounded-3xl border border-slate-200 overflow-hidden card-shadow">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="text-[10px] text-slate-400 font-bold uppercase bg-slate-50/50">
-                                <tr>
-                                    <th class="px-8 py-5">#</th>
-                                    <th class="px-6 py-5">Club</th>
-                                    <th class="px-4 py-5 text-center">MP</th>
-                                    <th class="px-2 py-5 text-center text-emerald-600">W</th>
-                                    <th class="px-2 py-5 text-center text-rose-500">L</th>
-                                    <th class="px-4 py-5 text-center text-indigo-600">Pts</th>
-                                    <th class="px-8 py-5 text-right">Last 5</th>
-                                </tr>
-                            </thead>
-                            <tbody id="standingsBody" class="divide-y divide-slate-100 text-sm text-slate-600"></tbody>
-                        </table>
-                    </div>
-                    <button id="showMoreBtn" onclick="toggleStandings()" class="w-full py-4 text-[10px] font-black text-indigo-600 hover:bg-indigo-50 transition uppercase border-t border-slate-100">Show Full Standings</button>
+                    <table class="w-full text-left">
+                        <thead class="text-[10px] text-slate-400 font-bold uppercase bg-slate-50/50">
+                            <tr><th class="px-8 py-5">#</th><th class="px-6 py-5">Club</th><th class="px-4 py-5 text-center">MP</th><th class="px-2 py-5 text-center">W</th><th class="px-2 py-5 text-center">L</th><th class="px-4 py-5 text-center">Pts</th><th class="px-8 py-5 text-right">Form</th></tr>
+                        </thead>
+                        <tbody id="standingsBody" class="divide-y divide-slate-100 text-sm"></tbody>
+                    </table>
+                    <button onclick="toggleStandings()" class="w-full py-4 text-[10px] font-black text-indigo-600 hover:bg-slate-50 uppercase border-t border-slate-100">Toggle Full Table</button>
                 </section>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 card-shadow">
-                        <h4 class="text-[9px] font-black text-slate-400 uppercase mb-3 flex justify-between">Top Scorers <i class="fa-solid fa-fire text-orange-400"></i></h4>
-                        <div id="topScorers" class="space-y-2"></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 card-shadow">
-                        <h4 class="text-[9px] font-black text-slate-400 uppercase mb-3 flex justify-between">Assists <i class="fa-solid fa-magic text-indigo-400"></i></h4>
-                        <div id="topAssists" class="space-y-2"></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 card-shadow">
-                        <h4 class="text-[9px] font-black text-slate-400 uppercase mb-3 flex justify-between">Yellow Cards <i class="fa-solid fa-copy text-amber-400"></i></h4>
-                        <div id="topYellows" class="space-y-2"></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 card-shadow">
-                        <h4 class="text-[9px] font-black text-slate-400 uppercase mb-3 flex justify-between">Red Cards <i class="fa-solid fa-square text-rose-500"></i></h4>
-                        <div id="topReds" class="space-y-2"></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 card-shadow">
-                        <h4 class="text-[9px] font-black text-slate-400 uppercase mb-3 flex justify-between">Golden Glove <i class="fa-solid fa-hand text-emerald-500"></i></h4>
-                        <div id="topSheets" class="space-y-2"></div>
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 card-shadow"><h4 class="text-[9px] font-black text-slate-400 uppercase mb-3">Top Goals</h4><div id="topScorers" class="space-y-1"></div></div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 card-shadow"><h4 class="text-[9px] font-black text-slate-400 uppercase mb-3">Top Assists</h4><div id="topAssists" class="space-y-1"></div></div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 card-shadow"><h4 class="text-[9px] font-black text-slate-400 uppercase mb-3">Yellows</h4><div id="topYellows" class="space-y-1"></div></div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 card-shadow"><h4 class="text-[9px] font-black text-slate-400 uppercase mb-3">Reds</h4><div id="topReds" class="space-y-1"></div></div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 card-shadow"><h4 class="text-[9px] font-black text-slate-400 uppercase mb-3">Clean Sheets</h4><div id="topSheets" class="space-y-1"></div></div>
                 </div>
             </div>
 
             <!-- MATCHES VIEW -->
             <div id="view-matches" class="hidden space-y-6">
-                <h3 class="text-xs font-black text-slate-500 uppercase tracking-widest px-2">League Fixtures & Results</h3>
-                <div id="fullFixturesList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                <div class="flex items-center space-x-4 overflow-x-auto pb-4 custom-scroll" id="roundRibbon"></div>
+                <div id="matchDayDisplay" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             </div>
 
             <!-- PREDICTIONS VIEW -->
-            <div id="view-predictions" class="hidden space-y-8">
-                <div id="predictionPrompt" class="bg-indigo-600 rounded-3xl p-12 text-white text-center shadow-xl">
-                    <i class="fa-solid fa-brain text-4xl mb-4 opacity-50"></i>
-                    <h3 class="text-2xl font-black">AI Analysis Engine</h3>
-                    <p class="text-indigo-100 text-sm mt-2 max-w-sm mx-auto">Click 'Analyze' on any match in the Matches tab to view win probabilities and H2H data.</p>
-                </div>
-                <div id="predictionDisplay" class="hidden"></div>
-            </div>
+            <div id="view-predictions" class="hidden"><div id="predictionDisplay"></div></div>
         </div>
     </main>
 
     <script>
-        const CONFIG = {
-            KEY: "65a3207dce4446073729a1e509ba3278",
-            BASE: "https://v3.football.api-sports.io"
-        };
-
+        const CONFIG = { KEY: "65a3207dce4446073729a1e509ba3278", BASE: "https://v3.football.api-sports.io" };
         const LEAGUES = [
-            { id: 39, name: "Premier League", country: "ENG" },
-            { id: 140, name: "La Liga", country: "ESP" },
-            { id: 78, name: "Bundesliga", country: "GER" },
-            { id: 135, name: "Serie A", country: "ITA" },
-            { id: 61, name: "Ligue 1", country: "FRA" },
-            { id: 88, name: "Eredivisie", country: "NED" },
-            { id: 94, name: "Primeira Liga", country: "POR" },
-            { id: 253, name: "MLS", country: "USA" },
-            { id: 307, name: "Pro League", country: "KSA" },
-            { id: 71, name: "Série A", country: "BRA" },
-            { id: 179, name: "Premiership", country: "SCO" },
-            { id: 203, name: "Süper Lig", country: "TUR" },
-            { id: 98, name: "J1 League", country: "JPN" },
-            { id: 262, name: "Liga MX", country: "MEX" },
-            { id: 144, name: "Championship", country: "ENG" }
+            { id: 39, name: "Premier League", country: "ENG" }, { id: 140, name: "La Liga", country: "ESP" }, { id: 78, name: "Bundesliga", country: "GER" },
+            { id: 135, name: "Serie A", country: "ITA" }, { id: 61, name: "Ligue 1", country: "FRA" }, { id: 88, name: "Eredivisie", country: "NED" },
+            { id: 94, name: "Primeira Liga", country: "POR" }, { id: 253, name: "MLS", country: "USA" }, { id: 307, name: "Pro League", country: "KSA" },
+            { id: 71, name: "Série A", country: "BRA" }, { id: 179, name: "Premiership", country: "SCO" }, { id: 203, name: "Süper Lig", country: "TUR" },
+            { id: 98, name: "J1 League", country: "JPN" }, { id: 262, name: "Liga MX", country: "MEX" }, { id: 144, name: "Championship", country: "ENG" }
         ];
 
-        let state = { leagueId: 39, season: 2025, tab: 'summary', isExpanded: false, standings: [] };
+        let state = { leagueId: 39, season: 2025, tab: 'summary', standings: [], expanded: false, currentRound: null };
+        let refreshInterval = null;
 
-        async function api(endpoint) {
-            try {
-                const res = await fetch(`${CONFIG.BASE}/${endpoint}`, {
-                    headers: { "x-apisports-key": CONFIG.KEY, "x-rapidapi-host": "v3.football.api-sports.io" }
-                });
-                const data = await res.json();
-                return data.response;
-            } catch (e) { return []; }
+        async function api(path) {
+            const r = await fetch(`${CONFIG.BASE}/${path}`, { headers: { "x-apisports-key": CONFIG.KEY, "x-rapidapi-host": "v3.football.api-sports.io" } });
+            const d = await r.json(); return d.response;
         }
 
-        async function switchTab(tabId) {
-            state.tab = tabId;
+        async function switchTab(t) {
+            state.tab = t;
             document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.remove('active-tab'));
-            document.getElementById(`tab-${tabId}`).classList.add('active-tab');
+            document.getElementById(`tab-${t}`).classList.add('active-tab');
             document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`view-${tabId}`).classList.remove('hidden');
-            if (tabId === 'matches') loadAllMatches();
-        }
-
-        function changeSeason(year) {
-            state.season = parseInt(year);
-            loadDashboard(state.leagueId);
-        }
-
-        function toggleStandings() {
-            state.isExpanded = !state.isExpanded;
-            document.getElementById('showMoreBtn').innerText = state.isExpanded ? "Show Top 10" : "Show Full Standings";
-            renderStandings(state.standings);
+            document.getElementById(`view-${t}`).classList.remove('hidden');
+            
+            // Clean up polling when leaving matches tab
+            clearInterval(refreshInterval);
+            if (t === 'matches') {
+                loadRounds();
+                refreshInterval = setInterval(() => { if(state.currentRound) loadRoundFixtures(state.currentRound, true); }, 60000);
+            }
         }
 
         async function loadDashboard(id) {
-            state.leagueId = id;
-            const league = LEAGUES.find(l => l.id === id);
-            document.getElementById('headerLeague').innerText = league.name;
-            renderSidebar();
-
-            const standings = await api(`standings?league=${id}&season=${state.season}`);
-            if (standings && standings[0]) {
-                state.standings = standings[0].league.standings[0];
-                renderStandings(state.standings);
+            state.leagueId = id; renderSidebar();
+            const res = await api(`standings?league=${id}&season=${state.season}`);
+            if (res && res[0]) {
+                state.standings = res[0].league.standings[0];
+                renderStandings();
                 loadStats();
             }
         }
 
-        function renderStandings(data) {
-            const list = state.isExpanded ? data : data.slice(0, 10);
-            document.getElementById('standingsBody').innerHTML = list.map(t => `
+        function renderStandings() {
+            const data = state.expanded ? state.standings : state.standings.slice(0,10);
+            document.getElementById('standingsBody').innerHTML = data.map(t => `
                 <tr class="hover:bg-slate-50 transition">
-                    <td class="px-8 py-5 font-black text-slate-400 text-xs">${t.rank}</td>
-                    <td class="px-6 py-5 flex items-center font-bold text-slate-800">
-                        <img src="${t.team.logo}" class="w-5 h-5 mr-3"> ${t.team.name}
-                    </td>
-                    <td class="px-4 py-5 text-center font-medium">${t.all.played}</td>
-                    <td class="px-2 py-5 text-center font-bold text-emerald-600">${t.all.win}</td>
-                    <td class="px-2 py-5 text-center font-bold text-rose-500">${t.all.lose}</td>
-                    <td class="px-4 py-5 text-center font-black text-indigo-600">${t.points}</td>
-                    <td class="px-8 py-5 text-right">${(t.form || "").split('').map(f => `<span class="form-dot form-${f}">${f}</span>`).join('')}</td>
+                    <td class="px-8 py-4 font-black text-slate-300 text-[10px]">${t.rank}</td>
+                    <td class="px-6 py-4 flex items-center font-bold text-slate-700 text-xs"><img src="${t.team.logo}" class="w-5 h-5 mr-3"> ${t.team.name}</td>
+                    <td class="px-4 py-4 text-center text-xs">${t.all.played}</td>
+                    <td class="px-2 py-4 text-center font-bold text-emerald-500 text-xs">${t.all.win}</td>
+                    <td class="px-2 py-4 text-center font-bold text-rose-500 text-xs">${t.all.lose}</td>
+                    <td class="px-4 py-4 text-center font-black text-indigo-600 text-sm">${t.points}</td>
+                    <td class="px-8 py-4 text-right">${(t.form || "").split('').map(f => `<span class="form-dot form-${f}">${f}</span>`).join('')}</td>
                 </tr>`).join('');
         }
 
-        async function loadStats() {
-            const league = state.leagueId;
-            const season = state.season;
+        function toggleStandings() { state.expanded = !state.expanded; renderStandings(); }
+
+        async function loadRounds() {
+            const rounds = await api(`fixtures/rounds?league=${state.leagueId}&season=${state.season}`);
+            const current = await api(`fixtures/rounds?league=${state.leagueId}&season=${state.season}&current=true`);
+            const target = current[0] || rounds[rounds.length-1];
             
-            const [scorers, assists, yellows, reds] = await Promise.all([
-                api(`players/topscorers?league=${league}&season=${season}`),
-                api(`players/topassists?league=${league}&season=${season}`),
-                api(`players/topyellowcards?league=${league}&season=${season}`),
-                api(`players/topredcards?league=${league}&season=${season}`)
-            ]);
-
-            renderStatBox(scorers?.slice(0, 5), 'topScorers', 'goals.total', 'text-indigo-600');
-            renderStatBox(assists?.slice(0, 5), 'topAssists', 'goals.assists', 'text-indigo-600');
-            renderStatBox(yellows?.slice(0, 5), 'topYellows', 'cards.yellow', 'text-amber-500');
-            renderStatBox(reds?.slice(0, 5), 'topReds', 'cards.red', 'text-rose-500');
-
-            // Golden Glove (Clean Sheets)
-            const gks = await api(`players/topscorers?league=${league}&season=${season}`); // Fallback logic
-            document.getElementById('topSheets').innerHTML = state.standings.slice(0,5).map(t => `
-                <div class="flex justify-between items-center text-[10px] p-2 bg-slate-50 rounded-xl mb-1">
-                    <span class="font-bold truncate w-24">${t.team.name}</span>
-                    <span class="font-black text-emerald-600">${t.all.goals.against} (GA)</span>
-                </div>`).join('');
-        }
-
-        function renderStatBox(data, id, path, color) {
-            document.getElementById(id).innerHTML = data?.map(i => `
-                <div class="flex justify-between items-center text-[10px] p-2 bg-slate-50 rounded-xl mb-1">
-                    <span class="font-bold truncate w-24">${i.player.name}</span>
-                    <span class="font-black ${color}">${path.split('.').reduce((o, k) => o[k], i.statistics[0]) || 0}</span>
-                </div>`).join('') || '<p class="text-[9px] text-slate-300">No data</p>';
-        }
-
-        async function loadAllMatches() {
-            const fixtures = await api(`fixtures?league=${state.leagueId}&season=${state.season}`);
-            document.getElementById('fullFixturesList').innerHTML = fixtures.map(m => {
-                const isFT = m.fixture.status.short === 'FT';
-                const score = isFT ? `${m.goals.home} - ${m.goals.away}` : new Date(m.fixture.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                return `
-                <div class="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-center card-shadow group">
-                    <div class="flex-1 flex flex-col items-center">
-                        <img src="${m.teams.home.logo}" class="w-6 h-6 mb-1">
-                        <span class="text-[10px] font-bold text-center">${m.teams.home.name}</span>
-                    </div>
-                    <div class="px-4 text-center">
-                        <div class="text-xs font-black ${isFT ? 'text-indigo-600' : 'text-slate-400'}">${score}</div>
-                        <div class="text-[8px] font-bold text-slate-300 mt-1 uppercase">${isFT ? 'Final' : new Date(m.fixture.date).toLocaleDateString()}</div>
-                        ${!isFT ? `<button onclick="getPrediction(${m.fixture.id}, ${m.teams.home.id}, ${m.teams.away.id})" class="mt-2 text-[8px] font-black bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition uppercase">Analyze</button>` : ''}
-                    </div>
-                    <div class="flex-1 flex flex-col items-center">
-                        <img src="${m.teams.away.logo}" class="w-6 h-6 mb-1">
-                        <span class="text-[10px] font-bold text-center">${m.teams.away.name}</span>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        async function getPrediction(fixId, homeId, awayId) {
-            switchTab('predictions');
-            document.getElementById('predictionPrompt').classList.add('hidden');
-            const display = document.getElementById('predictionDisplay');
-            display.innerHTML = '<div class="h-64 loading-shimmer rounded-3xl"></div>';
-            display.classList.remove('hidden');
-
-            const [predData, h2hData] = await Promise.all([
-                api(`predictions?fixture=${fixId}`),
-                api(`fixtures/headtohead?h2h=${homeId}-${awayId}&last=5`)
-            ]);
-
-            const p = predData[0];
-            const h2hHtml = h2hData.map(h => `
-                <div class="flex justify-between items-center p-3 border-b border-slate-100 last:border-0">
-                    <span class="text-[10px] font-bold text-slate-400">${new Date(h.fixture.date).getFullYear()}</span>
-                    <span class="text-[11px] font-bold">${h.teams.home.name} <span class="bg-slate-100 px-2 rounded ml-1">${h.goals.home}-${h.goals.away}</span> ${h.teams.away.name}</span>
-                </div>`).join('');
-
-            display.innerHTML = `
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-white p-8 rounded-3xl card-shadow border border-slate-200">
-                        <div class="flex justify-between items-center mb-8">
-                            <div class="text-center w-24 truncate"><img src="${p.teams.home.logo}" class="w-12 h-12 mb-2 mx-auto"><p class="text-[10px] font-black truncate">${p.teams.home.name}</p></div>
-                            <div class="text-center flex-1">
-                                <p class="text-[9px] font-black text-indigo-500 uppercase tracking-widest mb-3">Win Probability</p>
-                                <div class="flex h-3 w-full bg-slate-100 rounded-full overflow-hidden">
-                                    <div class="bg-emerald-500" style="width: ${p.predictions.percent.home}"></div>
-                                    <div class="bg-slate-300" style="width: ${p.predictions.percent.draw}"></div>
-                                    <div class="bg-indigo-600" style="width: ${p.predictions.percent.away}"></div>
-                                </div>
-                            </div>
-                            <div class="text-center w-24 truncate"><img src="${p.teams.away.logo}" class="w-12 h-12 mb-2 mx-auto"><p class="text-[10px] font-black truncate">${p.teams.away.name}</p></div>
-                        </div>
-                        <div class="bg-slate-50 p-6 rounded-2xl"><p class="text-xs font-semibold leading-relaxed">"${p.predictions.advice}"</p></div>
-                    </div>
-                    <div class="bg-white rounded-3xl card-shadow border border-slate-200 overflow-hidden">
-                        <div class="p-6 border-b border-slate-100 bg-slate-50/50"><h4 class="text-xs font-black text-slate-500 uppercase tracking-widest">Head-to-Head History</h4></div>
-                        <div class="p-2">${h2hHtml}</div>
-                    </div>
-                </div>`;
-        }
-
-        function renderSidebar() {
-            document.getElementById('leagueNav').innerHTML = LEAGUES.map(l => `
-                <button onclick="loadDashboard(${l.id})" class="w-full flex items-center p-3 px-6 rounded-xl text-[12px] transition ${l.id === state.leagueId ? 'active-league' : 'text-slate-400 hover:text-slate-900'}">
-                    <span class="w-8 text-[9px] font-black opacity-30 text-left uppercase">${l.country}</span>
-                    <span class="truncate">${l.name}</span>
-                </button>`).join('');
-        }
-
-        window.onload = () => loadDashboard(39);
-    </script>
-</body>
-</html>
+            document.getElementById('roundRibbon').innerHTML =
